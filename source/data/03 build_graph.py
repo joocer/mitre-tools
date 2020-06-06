@@ -170,6 +170,22 @@ print (len(graph.nodes), len(graph.edges))
 
 ###########################
 
+def remove_orphans(graph):
+    orphan_nodes = []
+    g = graph.copy()
+    for node_id in g.nodes():
+        node = g.nodes()[node_id]
+        if node.get('kind') in [None]:
+            orphan_nodes.append(node_id)
+
+    for node_id in orphan_nodes:
+        g.remove_node(node_id)
+    return g
+
+graph = remove_orphans(graph)
+
+###########################
+
 print('saving to graphml')
 nx.write_graphml(graph, r'../../data/processed/mitre-data.graphml')
 print ('done')
