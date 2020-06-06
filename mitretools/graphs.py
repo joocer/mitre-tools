@@ -15,15 +15,25 @@ def remove_orphans(graph):
         g.remove_node(node_id)
     return g
 
+def intersect_lists(lst1, lst2): 
+    lst3 = [value for value in lst1 if value in lst2] 
+    return lst3 
+
+def intersect_list_of_lists(list_of_lists):
+    lister = list_of_lists[0]
+    for i in range(len(list_of_lists)):
+        lister = intersect_lists(lister, list_of_lists[i])
+    return lister
+
 def show_graph(graph):
     LARGE_FONT = 14
     plt.rc('font', size=LARGE_FONT)
     node_labels=nx.get_node_attributes(graph, 'label')
     pos = nx.spring_layout(graph, iterations=20)
     plt.figure(figsize = (15,12))
-    nx.draw(graph, pos=pos, edge_color="#CCCCCC", linewidths=0.3, node_size=1, with_labels=True, labels=node_labels)
+    nx.draw(graph, pos=pos, edge_color="#CCCCCC", linewidths=0.3, node_size=1, with_labels=True, labels=node_labels, connectionstyle='arc3, rad=0.2')
     edge_labels = nx.get_edge_attributes(graph, 'relationship')
-    nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels, font_color='red')
+    nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels, font_color='red', connectionstyle='arc3, rad=0.2')
     plt.axis('off')
     plt.show()
 
@@ -50,7 +60,21 @@ def list_nodes(graph, type_filter = [], attributes=['label'], separator=', ', oc
             nodes[result] = node.get('occurances')
     return nodes
 
-def filter_graph(graph, target_node_filter, edge_filter):
+def filter_graph(graph, target_node_filter, edge_filter, node_filter = {}):
+    '''
+    Filters a graph for nodes connected to a given set of nodes.
+
+    graph: the graph (must be a directed)
+
+    target_node_filter: a dictionary of filters, where multiple filters are given, they are ANDed.
+        format for the filters are:
+        { 
+            attribute: [values], 
+            attribute: [values] 
+        }
+        
+    edge_filter:
+    '''
     working_graph = graph.copy()
     
     # filter the graph to only the edges wanted
@@ -59,14 +83,31 @@ def filter_graph(graph, target_node_filter, edge_filter):
             value = working_graph.edges()[edge_id].get(key)
             if not value in edge_filter[key]:
                 working_graph.remove_edge(edge_id[0], edge_id[1])
-
-    # get list of target nodes <- will only work with a single filter, needs modification for multiple filters
+                
+    remove_nodes = []
+    # filter the graph to only the nodes wanted
+    for key in node_filter:
+        for node_id in working_graph.nodes:
+            node = working_graph.nodes()[node_id]
+            if node.get('kind') == key:
+                for sub_key in node_filter[key]:
+                    sub_value = node.get(sub_key)
+                    if sub_value != None:
+                        if node_filter[key][sub_key] == sub_value:
+                            remove_nodes.append(node_id)
+    for node_id in remove_nodes:
+        working_graph.remove_node(node_id)
+            
+    # filter nodes to find starting points
+    target_nodes = []
     for key in target_node_filter:
         _target_nodes = [x for x,y in working_graph.nodes(data=True) if y.get(key) in target_node_filter[key]]
+        target_nodes.append(_target_nodes)
+    target_nodes = intersect_list_of_lists(target_nodes)
 
     # build a list of nodes attached to the search nodes
     nodes = []
-    for target_node in _target_nodes:
+    for target_node in target_nodes:
         tree = nx.dfs_tree(working_graph, source=target_node, depth_limit=10)
         for node_id in tree.nodes():
             node = working_graph.nodes()[node_id]
