@@ -133,7 +133,7 @@ import networkx as nx
 import random
 
 
-def hierarchy_pos(G, root=None, width=1., vert_gap = 0.2, vert_loc = 0, xcenter = 0.5):
+def hierarchy_pos(G, root=None, width=1.5, vert_gap = 1., vert_loc = 0, xcenter = 0.5):
 
     '''
     From Joel's answer at https://stackoverflow.com/a/29597209/2966723.  
@@ -201,11 +201,11 @@ def show_tree(graph):
     for node in pos:
         pos[node] = (1 - pos[node][1]),pos[node][0]
     
-    LARGE_FONT = 14
+    LARGE_FONT = 12
     plt.rc('font', size=LARGE_FONT)
     
     node_labels=nx.get_node_attributes(graph, 'label')
-    plt.figure(figsize = (15,12))
+    plt.figure(figsize = (25,16))
     nx.draw(graph, pos=pos, edge_color="#CCCCCC", linewidths=0.3, node_size=1, with_labels=True, labels=node_labels)
     edge_labels = nx.get_edge_attributes(graph, 'relationship')
     nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels, font_color='red')

@@ -2,4 +2,4 @@ data/raw/*
 data/intermediate/*
 data/processed/*
 *.pyc
-.ipynb_checkpoints/*
+*checkpoints*
