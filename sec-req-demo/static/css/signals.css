@@ -1,0 +1,39 @@
+.asvs-table {
+    table-layout: fixed;
+    width: 100%;
+    white-space: nowrap;
+    border-collapse: separate;
+    border-spacing: 2px;
+    font-size: 0.8em;
+}
+
+.asvs-table td {
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.asvs-cell {
+    border: 1px #b8daff solid;
+    color: #004085;
+    background-color: #cce5ff;
+}
+
+.active-requirement {
+    color: #004085;
+    background-color: #cce5ff;
+    border-color: #004085;
+}
+.active-requirement:hover {
+    background-color: #aaaaee;
+}
+
+.inactive-requirement {
+    color: #818182;
+    background-color: #fefefe;
+    border-color: #818182;
+}
+.inactive-requirement:hover {
+    background-color: #eeeeee;
+}

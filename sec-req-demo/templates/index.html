@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Security Requirements</title>
+
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/static/css/signals.css">
+
+    <script src="/static/js/d3.v5.min.js" charset="utf-8 "></script>
+
+</head>
+
+<nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="/">Security Requirements</a>
+    <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse"
+        data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="sidebar-sticky pt-3" id="capec-consequences">
+                <select class="form-control">
+                    <option>LOADING...</option>
+                </select>
+            </div>
+            <div class="sidebar-sticky pt-3" id="ratio"></div>
+        </nav>
+
+        <main role="main" class="col-md-10">
+            <div class="" id='asvs-table'>
+
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.bundle.min.js"></script>
+</body>
+
+<script>
+    var total_items = 0;
+
+    Array.prototype.groupBy = function (props) {
+        var arr = this;
+        var partialResult = {};
+        arr.forEach(el => {
+            var grpObj = {};
+            props.forEach(prop => {
+                grpObj[prop] = el[prop]
+            });
+            var key = JSON.stringify(grpObj);
+            if (!partialResult[key]) partialResult[key] = [];
+            partialResult[key].push(el);
+        });
+        var finalResult = Object.keys(partialResult).map(key => {
+            var keyObj = JSON.parse(key);
+            keyObj.values = partialResult[key];
+            return keyObj;
+        })
+        return finalResult;
+    }
+
+
+    function load_file(filename) {
+        console.log("FILE:", filename);
+
+        d3.csv(filename).then(function (data) {
+            total_items = data.length;
+
+            data.columns = Object.keys(data[0]);
+            grouped = data.groupBy(['Name'])
+            dom_html = "";
+
+            dom_html += "<tr>";
+            for (col = 0; col < grouped.length; col++) {
+                dom_html += "<td width='7%'>" + grouped[col].Name + "</td>"
+            }
+            dom_html += "</tr>";
+
+            done_one = true;
+            index = 0;
+            while (done_one) {
+                dom_html += "<tr>";
+                done_one = false;
+                for (col = 0; col < grouped.length; col++) {
+                    if (index < grouped[col].values.length) {
+                        done_one = true;
+                        element = grouped[col].values[index];
+                        const markup = `
+                            <td class="asvs-cell" 
+                                id="asvs-${element.Item}" 
+                                title="${element.Description}"
+                                data-toggle="tooltip">
+                                ${element.Item}
+                            </td>`;
+                        dom_html += markup;
+                    }
+                    else {
+                        dom_html += "<td></td>"
+                    }
+                }
+                dom_html += "</tr>";
+                index++;
+            }
+
+            document.getElementById("asvs-table").innerHTML = "<table class='asvs-table'>" + dom_html + "</table>"
+        });
+    }
+
+    function select_requirements(selected) {
+        var cells = document.getElementsByClassName("asvs-cell");
+        for (let cell of cells) {
+            cell.classList.remove('active-requirement');
+            cell.classList.remove('inactive-requirement');
+            if (selected.includes('ASVS-' + cell.innerText)) {
+                cell.classList.add('active-requirement');
+            }
+            else {
+                cell.classList.add('inactive-requirement');
+            }
+        }
+        document.getElementById('ratio').innerHTML = selected.length + ' of ' + total_items;
+    }
+
+    fetch('http://127.0.0.1:2300/consequences')
+        .then(response => response.json())
+        .then(data => load_menu(data));
+
+    function compare_consequences(a, b) {
+        if (a.principle+a.consequence > b.principle+b.consequence) return 1;
+        if (b.principle+b.consequence > a.principle+a.consequence) return -1;
+        return 0;
+    }
+
+    function load_menu(data) {
+        data.sort(compare_consequences);
+        var dom_html = '<select class="form-control" id="consequence-dropdown">';
+        dom_html += '<option>Select Option</option>';
+        for (let element of data) {
+            const markup = `
+                        <option principle="${element.principle}" detail="${element.consequence}">  
+                            ${element.principle}
+                            (${element.consequence})
+                        </option>`;
+                    dom_html += markup;
+        }
+        dom_html += "</select>"
+        document.getElementById('capec-consequences').innerHTML = dom_html;
+        document.getElementById('consequence-dropdown').onchange = update_requirements;
+    }
+    
+    function update_requirements() {
+        var consequence = document.getElementById("consequence-dropdown");
+        var principle = consequence.options[consequence.selectedIndex].getAttribute('principle');
+        var detail = consequence.options[consequence.selectedIndex].getAttribute('detail');
+        var url = 'http://127.0.0.1:2300/consequences/' + principle + '/' + detail;
+        fetch(url)
+            .then(response => response.json())
+            .then(data => select_requirements(data));
+    }
+
+    var delay = ( function() {
+        var timer = 0;
+        return function(callback, ms) {
+            clearTimeout (timer);
+            timer = setTimeout(callback, ms);
+        };
+    })();
+
+    load_file('/static/data/ASVS.csv')
+
+    delay(function(){
+        select_requirements([])
+    }, 500 ); // end delay
+    
+</script>
+
+</html>
