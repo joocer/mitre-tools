@@ -27,12 +27,12 @@ def api_base():
     
 ###############################################################################
     
-@app.route('/consequences/<group>/<impact>', methods=["GET", "OPTIONS"])
-def api_consequences_group_impact(group, impact):
+@app.route('/consequences/<group>/<impact>/<level>', methods=["GET", "OPTIONS"])
+def api_consequences_group_impact(group, impact, level):
     if request.method == "OPTIONS": # CORS preflight
         return _build_cors_prelight_response()
     elif request.method == "GET": 
-        g = get_graph(graph, group, impact)
+        g = get_graph(graph, group, impact, level)
         reqs = get_list(mt.list_nodes(g, ['asvs'], ['label']))
         return _corsify_actual_response(jsonify(reqs))
 
@@ -72,7 +72,7 @@ def get_list(items):
     r.sort()
     return r
 
-def get_graph(graph, group, impact):
+def get_graph(graph, group, impact, level):
     return mt.filter_graph(graph, 
                  { 
                      'label': [impact], 
@@ -92,7 +92,8 @@ def get_graph(graph, group, impact):
                                     'ParentOf',
                                      ''
                                    ] },
-                { 'capec' : { 'likelihood_of_attack': 'High' } })
+                [ { 'capec' : { 'likelihood_of_attack': 'High' } },
+                  { 'asvs'  : { level : True } } ])
 
 ###############################################################################
 

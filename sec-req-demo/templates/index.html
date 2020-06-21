@@ -31,9 +31,18 @@
 <div class="container-fluid">
     <div class="row">
         <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="sidebar-sticky pt-3">Key Threat</div>
             <div class="sidebar-sticky pt-3" id="capec-consequences">
                 <select class="form-control">
                     <option>LOADING...</option>
+                </select>
+            </div>
+            <div class="sidebar-sticky pt-3">Assurance Level</div>
+            <div class="sidebar-sticky pt-3" >
+                <select class="form-control" id="asvs_level">
+                    <option value="level_1">Base Level</option>
+                    <option value="level_2">Recommended Level</option>
+                    <option value="level_3">Enhanced Level</option>
                 </select>
             </div>
             <div class="sidebar-sticky pt-3" id="ratio"></div>
@@ -161,13 +170,17 @@
         dom_html += "</select>"
         document.getElementById('capec-consequences').innerHTML = dom_html;
         document.getElementById('consequence-dropdown').onchange = update_requirements;
+        document.getElementById('asvs_level').onchange = update_requirements;
     }
     
     function update_requirements() {
         var consequence = document.getElementById("consequence-dropdown");
+        var asvs_level = document.getElementById("asvs_level")
+
         var principle = consequence.options[consequence.selectedIndex].getAttribute('principle');
         var detail = consequence.options[consequence.selectedIndex].getAttribute('detail');
-        var url = 'http://127.0.0.1:2300/consequences/' + principle + '/' + detail;
+        var level = asvs_level.options[asvs_level.selectedIndex].getAttribute('value');
+        var url = 'http://127.0.0.1:2300/consequences/' + principle + '/' + detail + '/' + level;
         fetch(url)
             .then(response => response.json())
             .then(data => select_requirements(data));

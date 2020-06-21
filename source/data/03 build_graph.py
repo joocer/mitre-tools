@@ -136,7 +136,10 @@ for i, row in data.iterrows():
                    kind='asvs', 
                    description=row['Description'],
                    section_id=row['Section'],
-                   section_name=row['Name'])
+                   section_name=row['Name'],
+                   level_1=(row['L1']=='X'),
+                   level_2=(row['L2']=='X'),
+                   level_3=(row['L3']=='X'))
     
 # add edges
 for i, row in data.iterrows():

@@ -60,7 +60,7 @@ def list_nodes(graph, type_filter = [], attributes=['label'], separator=', ', oc
             nodes[result] = node.get('occurances')
     return nodes
 
-def filter_graph(graph, target_node_filter, edge_filter, node_filter = {}):
+def filter_graph(graph, target_node_filter, edge_filter, node_filter = []):
     '''
     Filters a graph for nodes connected to a given set of nodes.
 
@@ -86,15 +86,16 @@ def filter_graph(graph, target_node_filter, edge_filter, node_filter = {}):
                 
     remove_nodes = []
     # filter the graph to only the nodes wanted
-    for key in node_filter:
-        for node_id in working_graph.nodes:
-            node = working_graph.nodes()[node_id]
-            if node.get('kind') == key:
-                for sub_key in node_filter[key]:
-                    sub_value = node.get(sub_key)
-                    if sub_value != None:
-                        if node_filter[key][sub_key] == sub_value:
-                            remove_nodes.append(node_id)
+    for i in range(len(node_filter)):
+        for key in node_filter[i]:
+            for node_id in working_graph.nodes:
+                node = working_graph.nodes()[node_id]
+                if node.get('kind') == key:
+                    for sub_key in node_filter[i][key]:
+                        sub_value = node.get(sub_key)
+                        if sub_value != None:
+                            if node_filter[i][key][sub_key] != sub_value:
+                                remove_nodes.append(node_id)
     for node_id in remove_nodes:
         working_graph.remove_node(node_id)
             
