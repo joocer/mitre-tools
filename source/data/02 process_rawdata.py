@@ -4,24 +4,24 @@ import json
 import uuid
 import re
 
-base_nvd_data_file = r'../../data/raw/nvdcve-1.1-{year}.json'
-capec_stix_filepath = r'../../data/raw/stic-capec.json'
-attack_filepath = r'../../data/raw/enterprise-attack.json'
+base_nvd_data_file = r'data/raw/nvdcve-1.1-{year}.json'
+capec_stix_filepath = r'data/raw/stic-capec.json'
+attack_filepath = r'data/raw/enterprise-attack.json'
 
-nvd_filepath = r'../../data/intermediate/nvd-cve.csv'
-attack_attack_pattern_filepath = r'../../data/intermediate/attack-attack_pattern.csv'
-attack_relationship_filepath = r'../../data/intermediate/attack-relationship.csv'
-attack_course_of_action_filepath = r'../../data/intermediate/attack-course_of_action.csv'
-attack_intrusion_set_filepath = r'../../data/intermediate/attack-intrusion_set.csv'
-attack_malware_filepath = r'../../data/intermediate/attack-malware.csv'
-attack_tool_filepath = r'../../data/intermediate/attack-tool.csv'
-attack_x_mitre_tactic_filepath = r'../../data/intermediate/attack-x_mitre_tactic.csv'
-capec_attack_pattern_filepath = r'../../data/intermediate/capec-attack_pattern.csv'
-capec_relationship_filepath = r'../../data/intermediate/capec-relationship.csv'
-capec_course_of_action_filepath = r'../../data/intermediate/capec-course_of_action.csv'
-capec_consequences_filepath = r'../../data/intermediate/capec-consequences.csv'
-capec_prerequisite_filepath = r'../../data/intermediate/capec-prerequisite.csv'
-exploitdb_filepath = r'../../data/intermediate/mitre-exploitdb.csv'
+nvd_filepath = r'data/intermediate/nvd-cve.csv'
+attack_attack_pattern_filepath = r'data/intermediate/attack-attack_pattern.csv'
+attack_relationship_filepath = r'data/intermediate/attack-relationship.csv'
+attack_course_of_action_filepath = r'data/intermediate/attack-course_of_action.csv'
+attack_intrusion_set_filepath = r'data/intermediate/attack-intrusion_set.csv'
+attack_malware_filepath = r'data/intermediate/attack-malware.csv'
+attack_tool_filepath = r'data/intermediate/attack-tool.csv'
+attack_x_mitre_tactic_filepath = r'data/intermediate/attack-x_mitre_tactic.csv'
+capec_attack_pattern_filepath = r'data/intermediate/capec-attack_pattern.csv'
+capec_relationship_filepath = r'data/intermediate/capec-relationship.csv'
+capec_course_of_action_filepath = r'data/intermediate/capec-course_of_action.csv'
+capec_consequences_filepath = r'data/intermediate/capec-consequences.csv'
+capec_prerequisite_filepath = r'data/intermediate/capec-prerequisite.csv'
+exploitdb_filepath = r'data/intermediate/mitre-exploitdb.csv'
 
 def find_cves(string):
     tokens = re.findall(r"(?i)CVE.\d{4}-\d{4,7}", string) 

@@ -3,25 +3,25 @@ import pandas as pd
 import re
 import time
 
-capec_attack_pattern_filepath = r'../../data/intermediate/capec-attack_pattern.csv'
-capec_relationship_filepath = r'../../data/intermediate/capec-relationship.csv'
-capec_course_of_action_filepath = r'../../data/intermediate/capec-course_of_action.csv'
-capec_consequences_filepath = r'../../data/intermediate/capec-consequences.csv'
-capec_prerequisite_filepath = r'../../data/intermediate/capec-prerequisite.csv'
+capec_attack_pattern_filepath = r'data/intermediate/capec-attack_pattern.csv'
+capec_relationship_filepath = r'data/intermediate/capec-relationship.csv'
+capec_course_of_action_filepath = r'data/intermediate/capec-course_of_action.csv'
+capec_consequences_filepath = r'data/intermediate/capec-consequences.csv'
+capec_prerequisite_filepath = r'data/intermediate/capec-prerequisite.csv'
 
-asvs_filepath = r'../../data/raw/OWASP Application Security Verification Standard 4.0-en.csv'
-cwe_filepath = r'../../data/raw/2000-cwe.csv'
+asvs_filepath = r'data/raw/OWASP Application Security Verification Standard 4.0-en.csv'
+cwe_filepath = r'data/raw/2000-cwe.csv'
 
 ## currently aren't loading these into the graph
-nvd_filepath = r'../../data/intermediate/nvd-cve.csv'
-exploitdb_filepath = r'../../data/raw/mitre-exploitdb.csv'
-attack_malware_filepath = r'../../data/intermediate/attack-malware.csv'
-attack_intrusion_set_filepath = r'../../data/intermediate/attack-intrusion_set.csv'
-attack_tool_filepath = r'../../data/intermediate/attack-tool.csv'
-attack_relationship_filepath = r'../../data/intermediate/attack-relationship.csv'
-attack_x_mitre_tactic_filepath = r'../../data/intermediate/attack-x_mitre_tactic.csv'
-attack_course_of_action_filepath = r'../../data/intermediate/attack-course_of_action.csv'
-attack_attack_pattern_filepath = r'../../data/intermediate/attack-attack_pattern.csv'
+nvd_filepath = r'data/intermediate/nvd-cve.csv'
+exploitdb_filepath = r'data/raw/mitre-exploitdb.csv'
+attack_malware_filepath = r'data/intermediate/attack-malware.csv'
+attack_intrusion_set_filepath = r'data/intermediate/attack-intrusion_set.csv'
+attack_tool_filepath = r'data/intermediate/attack-tool.csv'
+attack_relationship_filepath = r'data/intermediate/attack-relationship.csv'
+attack_x_mitre_tactic_filepath = r'data/intermediate/attack-x_mitre_tactic.csv'
+attack_course_of_action_filepath = r'data/intermediate/attack-course_of_action.csv'
+attack_attack_pattern_filepath = r'data/intermediate/attack-attack_pattern.csv'
 
 def find_relationships(string):
     tokens = re.findall(r"(?i)ChildOf\:CWE ID\:\d{1,5}", string) 
@@ -190,5 +190,5 @@ graph = remove_orphans(graph)
 ###########################
 
 print('saving to graphml')
-nx.write_graphml(graph, r'../../data/processed/mitre-data.graphml')
+nx.write_graphml(graph, r'data/processed/mitre-data.graphml')
 print ('done')
