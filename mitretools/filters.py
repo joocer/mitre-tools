@@ -1,6 +1,8 @@
-# rewritten to allow chaining together of simple actions to form more
-# complex ones
+"""
+Methods to apply filters to graphs.
 
+
+"""
 
 def select_edges(graph, edge_filter = [], remove = False):
     """
@@ -9,7 +11,7 @@ def select_edges(graph, edge_filter = [], remove = False):
     Parameters
         graph: Graph to filter
         edge_filter: List of edge relationships to filter on
-        remove: (optional default False) whether to remove the selected Edges
+        remove: whether to remove the selected Edges (optional, default: False) 
     Returns a filtered graph.
     """
     working_graph = graph.copy()
@@ -31,7 +33,7 @@ def select_nodes(graph, node_filter = [], remove = False):
     Parameters
         graph: Graph to filter
         node_filter: List of node data types to filter on
-        remove: (optional default False) remove the selected Nodes
+        remove: whether to remove the selected Nodes (optional, default: False)
     Returns a filtered graph.
     """
     remove_nodes = []
@@ -66,13 +68,6 @@ def remove_orphans(graph):
     return working_graph
 
 
-###############################################################################
-
-
-def walk_from(graph):
-    working_graph = graph.copy()
-    print('write this')
+def walk_from(graph, starting_node, depth = 25):
+    working_graph = nx.dfs_tree(graph, source=starting_node, depth_limit=depth)
     return working_graph
-
-def join_graphs(graphs):
-    pass
