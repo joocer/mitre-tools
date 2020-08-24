@@ -4,6 +4,12 @@ import random
 
 
 def show_graph(graph):
+    """
+    Display a graph
+
+    Parameters
+        graph: Graph to display
+    """
     LARGE_FONT = 14
     plt.rc('font', size=LARGE_FONT)
     node_labels = nx.get_node_attributes(graph, 'id')
