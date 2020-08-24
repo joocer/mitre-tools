@@ -6,7 +6,7 @@ import random
 def show_graph(graph):
     LARGE_FONT = 14
     plt.rc('font', size=LARGE_FONT)
-    node_labels=nx.get_node_attributes(graph, 'label')
+    node_labels = nx.get_node_attributes(graph, 'id')
     pos = nx.spring_layout(graph, iterations=20)
     plt.figure(figsize = (15,12))
     nx.draw(graph, pos=pos, edge_color="#CCCCCC", linewidths=0.3, node_size=1, with_labels=True, labels=node_labels, connectionstyle='arc3, rad=0.2')

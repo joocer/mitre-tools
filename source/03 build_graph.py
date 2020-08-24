@@ -54,13 +54,13 @@ data = pd.read_csv(capec_attack_pattern_filepath)
 
 # add nodes
 for i, row in data.iterrows():
-    graph.add_node(row['capec'], 
-                   label=row['capec'], 
-                   kind='capec', 
-                   description=row['name'],
-                   likelihood_of_attack=row['likelihood_of_attack'],
-                   typical_severity=row['typical_severity']
-                  )    
+    graph.add_node(row['capec'],
+        node_type = 'CAPEC Attack', 
+        id=row['capec'],  
+        description=row['name'],
+        likelihood_of_attack=row['likelihood_of_attack'],
+        typical_severity=row['typical_severity']
+    )
     capecs[row['id']] = row['capec']
 
 print (len(graph.nodes), len(graph.edges))
@@ -73,9 +73,10 @@ data = pd.read_csv(capec_course_of_action_filepath)
 # add nodes
 for i, row in data.iterrows():
     graph.add_node(row['name'], 
-                   label=row['name'], 
-                   description=row['description'],
-                   kind='course of action')
+        node_type = 'CAPEC Course of Action',
+        id = row['name'], 
+        description=row['description']
+    )
     coa[row['id']] = row['name']
 
 print (len(graph.nodes), len(graph.edges))
@@ -87,7 +88,12 @@ data = pd.read_csv(capec_consequences_filepath)
 
 # add nodes
 for i, row in data.iterrows():
-    graph.add_node(row['id'], label=row['consequence'], kind='consequence', group=row['group'])
+    graph.add_node(row['id'], 
+        node_type = 'Consequence', 
+        id = row['id'], 
+        consequence = row['consequence'], 
+        group=row['group']
+    )
 
 print (len(graph.nodes), len(graph.edges))
 
@@ -98,56 +104,11 @@ data = pd.read_csv(capec_prerequisite_filepath)
 
 # add nodes
 for i, row in data.iterrows():
-    graph.add_node(row['id'], label=row['id'], kind='prerequisite')
-
-print (len(graph.nodes), len(graph.edges))
-
-###########################
-
-print('cwe_filepath')
-data = pd.read_csv(cwe_filepath, index_col=False)
-data.fillna('', inplace=True)
-
-# add nodes
-for i, row in data.iterrows():
-    graph.add_node('CWE-' + str(row['CWE-ID']), 
-                   label='CWE-' + str(row['CWE-ID']), 
-                   kind='cwe', 
-                   name=row['Name'])
-    
-# add edges
-for i, row in data.iterrows():
-    for rel in find_relationships(row['Related Weaknesses']):
-        graph.add_edge(rel, 'CWE-' + str(row['CWE-ID']), relationship='ChildOf')
-        graph.add_edge('CWE-' + str(row['CWE-ID']), rel, relationship='ParentOf')
-
-print (len(graph.nodes), len(graph.edges))
-
-###########################
-
-print('asvs_filepath')
-data = pd.read_csv(asvs_filepath, index_col=False)
-data.fillna('', inplace=True)
-
-# add nodes
-for i, row in data.iterrows():
-    graph.add_node('ASVS-' + str(row['Item']), 
-                   label='ASVS-' + str(row['Item']),
-                   kind='asvs', 
-                   description=row['Description'],
-                   section_id=row['Section'],
-                   section_name=row['Name'],
-                   level_1=(row['L1']=='X'),
-                   level_2=(row['L2']=='X'),
-                   level_3=(row['L3']=='X'))
-    
-# add edges
-for i, row in data.iterrows():
-    CWE = row['CWE']
-    if CWE != '':
-        CWE = 'CWE-' + str(int(CWE))
-        graph.add_edge('ASVS-' + str(row['Item']), CWE, relationship='Prevents')
-        graph.add_edge(CWE, 'ASVS-' + str(row['Item']), relationship='Inverse-Prevents')
+    graph.add_node(row['id'], 
+        node_type = 'CAPEC Pre-requisite',
+        id = row['id'],
+        kind='prerequisite'
+    )
 
 print (len(graph.nodes), len(graph.edges))
 
@@ -173,22 +134,60 @@ print (len(graph.nodes), len(graph.edges))
 
 ###########################
 
-def remove_orphans(graph):
-    orphan_nodes = []
-    g = graph.copy()
-    for node_id in g.nodes():
-        node = g.nodes()[node_id]
-        if node.get('kind') in [None]:
-            orphan_nodes.append(node_id)
+print('cwe_filepath')
+data = pd.read_csv(cwe_filepath, index_col=False)
+data.fillna('', inplace=True)
 
-    for node_id in orphan_nodes:
-        g.remove_node(node_id)
-    return g
+# add nodes
+for i, row in data.iterrows():
+    graph.add_node('CWE-' + str(row['CWE-ID']), 
+        node_type = 'CWE',
+        id = 'CWE-' + str(row['CWE-ID']), 
+        name = row['Name']
+    )
+    
+# add edges
+for i, row in data.iterrows():
+    for rel in find_relationships(row['Related Weaknesses']):
+        graph.add_edge(rel, 'CWE-' + str(row['CWE-ID']), relationship='ChildOf')
+        graph.add_edge('CWE-' + str(row['CWE-ID']), rel, relationship='ParentOf')
 
-graph = remove_orphans(graph)
+print (len(graph.nodes), len(graph.edges))
 
 ###########################
 
+print('asvs_filepath')
+data = pd.read_csv(asvs_filepath, index_col=False)
+data.fillna('', inplace=True)
+
+# add nodes
+for i, row in data.iterrows():
+    graph.add_node('ASVS-' + str(row['Item']),
+        node_type = 'ASVS',
+        id = 'ASVS-' + str(row['Item']),
+        description = row['Description'],
+        section_id = row['Section'],
+        section_name = row['Name'],
+        level_1 = (row['L1']=='X'),
+        level_2 = (row['L2']=='X'),
+        level_3 = (row['L3']=='X')
+    )
+    
+# add edges
+for i, row in data.iterrows():
+    CWE = row['CWE']
+    if CWE != '':
+        CWE = 'CWE-' + str(int(CWE))
+        graph.add_edge('ASVS-' + str(row['Item']), CWE, relationship='Prevents')
+        graph.add_edge(CWE, 'ASVS-' + str(row['Item']), relationship='Inverse-Prevents')
+
+print (len(graph.nodes), len(graph.edges))
+
+###########################
+
+
 print('saving to graphml')
+#nx.write_graphml(graph, r'data/processed/mitre-data.graphml')
+
 nx.write_graphml(graph, r'data/processed/mitre-data.graphml')
 print ('done')

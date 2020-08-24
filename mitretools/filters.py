@@ -4,6 +4,8 @@ Methods to apply filters to graphs.
 
 """
 
+import networkx as nx
+
 def select_edges(graph, edge_filter = [], remove = False):
     """
     Filters the edges of a graph.
@@ -32,7 +34,7 @@ def select_nodes(graph, node_filter = [], remove = False):
 
     Parameters
         graph: Graph to filter
-        node_filter: List of node data types to filter on
+        node_filter: List of 'node_types' to filter on
         remove: whether to remove the selected Nodes (optional, default: False)
     Returns a filtered graph.
     """
@@ -41,10 +43,10 @@ def select_nodes(graph, node_filter = [], remove = False):
     for node_id in working_graph.nodes:
         node = working_graph.nodes()[node_id]
         if remove:
-            if node.get('label') in node_filter:
+            if node.get('node_type') in node_filter:
                 remove_nodes.append(node_id)
         else:
-            if not node.get('label') in node_filter:
+            if not node.get('node_type') in node_filter:
                 remove_nodes.append(node_id)            
     for node_id in remove_nodes:
         working_graph.remove_node(node_id)
@@ -61,7 +63,7 @@ def remove_orphans(graph):
     orphan_nodes = []
     for node_id in working_graph.nodes():
         node = working_graph.nodes()[node_id]
-        if node.get('data') in [None]:
+        if node.get('node_type') in [None]:
             orphan_nodes.append(node_id)
     for node_id in orphan_nodes:
         working_graph.remove_node(node_id)
