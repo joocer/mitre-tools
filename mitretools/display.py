@@ -94,7 +94,7 @@ def show_tree(graph):
     LARGE_FONT = 12
     plt.rc('font', size=LARGE_FONT)
     
-    node_labels=nx.get_node_attributes(graph, 'label')
+    node_labels = nx.get_node_attributes(graph, 'id')
     plt.figure(figsize = (25,16))
     nx.draw(graph, pos=pos, edge_color="#CCCCCC", linewidths=0.3, node_size=1, with_labels=True, labels=node_labels)
     edge_labels = nx.get_edge_attributes(graph, 'relationship')
