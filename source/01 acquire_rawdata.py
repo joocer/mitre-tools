@@ -2,6 +2,7 @@ from urllib.request import urlopen
 from io import BytesIO
 from zipfile import ZipFile
 from datetime import datetime
+import os
 
 attack_url = r"https://github.com/mitre/cti/blob/master/enterprise-attack/enterprise-attack.json?raw=true"
 capec_url  = r"https://raw.githubusercontent.com/mitre/cti/master/capec/stix-capec.json"
@@ -9,7 +10,7 @@ cwe_url    = r'https://cwe.mitre.org/data/csv/2000.csv.zip'
 nvd_url    = r'https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-{year}.json.zip'
 
 # asvs is OWASP, not MITRE
-asvs_url   = r'https://raw.githubusercontent.com/OWASP/ASVS/master/4.0/OWASP%20Application%20Security%20Verification%20Standard%204.0-en.csv'
+asvs_url   = r'https://raw.githubusercontent.com/OWASP/ASVS/v4.0.1/4.0/OWASP%20Application%20Security%20Verification%20Standard%204.0-en.csv'
 
 
 def download_file(url, savelocation):
@@ -52,16 +53,19 @@ def replace_last(source_string, replace_what, replace_with):
     head, _sep, tail = source_string.rpartition(replace_what)
     return head + replace_with + tail
 
-print('starting downloads')
-download_file(attack_url, r'data/raw/enterprise-attack.json')
-print('downloaded ATT&CK')
-download_file(capec_url, r'data/raw/stic-capec.json')
-print('downloaded CAPEC')
-download_zip(cwe_url, r'data/raw/2000-cwe.csv', 'iso-8859-1')
-print('downloaded CWE')
-download_nvd_files()
-print('downloaded CVE')
-download_exploit_db(r'data/raw/mitre-exploitdb.csv')
-print('downloaded exploit db')
-download_file(asvs_url, r'data/raw/OWASP Application Security Verification Standard 4.0-en.csv')
+os.makedirs(r'data/raw', exist_ok=True)
+os.makedirs(r'data/intermediate', exist_ok=True)
+os.makedirs(r'data/processed', exist_ok=True)
+#print('starting downloads')
+#download_file(attack_url, r'data/raw/enterprise-attack.json')
+#print('downloaded ATT&CK')
+#download_file(capec_url, r'data/raw/stic-capec.json')
+#print('downloaded CAPEC')
+#download_zip(cwe_url, r'data/raw/2000-cwe.csv', 'iso-8859-1')
+#print('downloaded CWE')
+#download_nvd_files()
+#print('downloaded CVE')
+#download_exploit_db(r'data/raw/mitre-exploitdb.csv')
+#print('downloaded exploit db')
+#download_file(asvs_url, r'data/raw/OWASP Application Security Verification Standard 4.0-en.csv')
 print('done')

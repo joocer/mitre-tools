@@ -143,7 +143,7 @@
         document.getElementById('ratio').innerHTML = selected.length + ' of ' + total_items;
     }
 
-    fetch('http://127.0.0.1:2300/consequences')
+    fetch('/consequences')
         .then(response => response.json())
         .then(data => load_menu(data));
 
@@ -178,7 +178,7 @@
         var principle = consequence.options[consequence.selectedIndex].getAttribute('principle');
         var detail = consequence.options[consequence.selectedIndex].getAttribute('detail');
         var level = asvs_level.options[asvs_level.selectedIndex].getAttribute('value');
-        var url = 'http://127.0.0.1:2300/consequences/' + principle + '/' + detail + '/' + level;
+        var url = '/consequences/' + principle + '/' + detail + '/' + level;
         fetch(url)
             .then(response => response.json())
             .then(data => select_requirements(data));

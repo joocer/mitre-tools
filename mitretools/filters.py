@@ -40,9 +40,9 @@ def select_nodes_by_type(graph, node_filter = [], remove = False):
     Returns a filtered graph.
     """
     if remove:
-        result_nodes = filter(lambda x: x[1].get('node_type') in node_filter, graph.nodes(data=True))
+        result_nodes = filter(lambda x: x[1].get('node_type', '') in node_filter, graph.nodes(data=True))
     else:
-        result_nodes = filter(lambda x: x[1].get('node_type') not in node_filter, graph.nodes(data=True))
+        result_nodes = filter(lambda x: x[1].get('node_type', '') not in node_filter, graph.nodes(data=True))
     result_nodeids = map(lambda x: x[0], result_nodes)    
     working_graph = graph.copy()
     working_graph.remove_nodes_from(result_nodeids)

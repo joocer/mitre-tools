@@ -246,9 +246,9 @@ def process_capec():
                 for reference in entry['external_references']:
                     source = reference['source_name']
                     if externals.get(source) == None:
-                        externals[source] = [reference['external_id']]
+                        externals[source] = [reference.get('external_id')]
                     else:
-                        externals[source].append(reference['external_id'])
+                        externals[source].append(reference.get('external_id'))
                 for capec in externals['capec']:
                     new_row = {
                             'type': a_type,
